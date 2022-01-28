@@ -24,9 +24,10 @@ if (isset($_SESSION['userloged'])) {
 <div class="container">
 
     <div class="table-responsive">
-        <table class="main-table text-center table  table-bordered">
+        <table class="main-table manage-members text-center table  table-bordered">
             <tr>
                 <td>#ID</td>
+                <td>Avatar</td>
                 <td>Username</td>
                 <td>Email</td>
                 <td>Full Name</td>
@@ -38,6 +39,12 @@ if (isset($_SESSION['userloged'])) {
                     foreach ($rows as $row) {
                         echo "<tr>";
                         echo "<td>" . $row['UserID'] . "</td>";
+                        if (empty($row['avatar'])) {
+                            echo "<td><img src='uploaded/avatars/999999999_default.png'></td>";
+                        } else {
+                            echo "<td><img src='uploaded/avatars/" . $row['avatar'] . "'></td>";
+                        }
+
                         echo "<td>" . $row['Username'] . "</td>";
                         echo "<td>" . $row['Email'] . "</td>";
                         echo "<td>" . $row['FullName'] . "</td>";
@@ -119,7 +126,7 @@ if (isset($_SESSION['userloged'])) {
         <div class="form-group form-group-lg">
             <label class="col-sm-2 control-label">User Avatar </label>
             <div class="col-sm-10 col-md-6">
-                <input type="file" name="avatar" class="form-control" required="required" />
+                <input type="file" name="avatar" class="form-control" />
             </div>
         </div>
         <!-- End Avatar Field -->
@@ -146,6 +153,21 @@ if (isset($_SESSION['userloged'])) {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             echo '<h1 class="text-center">Insert Member</h1>';
             echo '<div class="container">';
+
+
+            // Upload Variables
+            $avatarName = $_FILES['avatar']['name'];
+            $avatarType = $_FILES['avatar']['type'];
+            $avatarTmp  = $_FILES['avatar']['tmp_name'];
+            $avatarSize = $_FILES['avatar']['size'];
+
+
+            // extract the extension and make it to lower case  and ignore the waring if  there is no image
+            @$extention = strtolower(pathinfo($avatarName)['extension']);
+
+
+            //List Of Allowed File Typed To Upload
+            $avatarExtension = array("jpeg", "jpg", "png", "gif");
 
 
             // get the result from the post method
@@ -191,11 +213,23 @@ if (isset($_SESSION['userloged'])) {
                 $formErrors[] = 'The Password Can\'t be Less than 8 digits';
             }
 
+            if (!in_array($extention, $avatarExtension) && !empty($avatarName)) {
+                $formErrors[] = 'The Image Extension Not Allowed You can upload image "jpeg", "jpg", "png", "gif" Only';
+            }
+
+            if ($avatarSize > 4194304) {
+                $formErrors[] = 'The Image Can\'t be larger than 4MB';
+            }
+
             foreach ($formErrors as $errors) {
                 echo "<div class='alert alert-danger'>" . $errors . "</div>";
             }
 
             if (empty($formErrors)) {
+
+                $avatar = rand(0, 9999999999999) . "_" . $avatarName;
+
+                move_uploaded_file($avatarTmp, "uploaded\avatars\\" . $avatar);
 
                 // Check if the username is already exist using checkItem Function
                 $checkUsername = checkItem("Username", "users", $username);
@@ -203,12 +237,13 @@ if (isset($_SESSION['userloged'])) {
                     $theMsg = "<div class='alert alert-danger'>The username Is already Exist</div>";
                     redirectHome($theMsg, 'back', 4);
                 } else {
-                    $stmt = $con->prepare("INSERT INTO users (Username,Password,Email,FullName,RegStatus,Date) VALUES (:user , :pass , :email , :fname ,1,now())");
+                    $stmt = $con->prepare("INSERT INTO users (Username,Password,Email,FullName,RegStatus,Date,avatar) VALUES (:user , :pass , :email , :fname ,1,now(),:avatar)");
                     $stmt->execute(array(
                         ':user'     => $username,
                         ':pass'     => $hashPass,
                         ':email'    => $email,
-                        ':fname'    => $fullname
+                        ':fname'    => $fullname,
+                        ':avatar'   => $avatar
                     ));
 
                     $counter = $stmt->rowCount();

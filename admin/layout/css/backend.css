@@ -189,6 +189,12 @@ h1 {
   top: 15px;
 }
 
+.manage-members img {
+  width: 65px;
+  height: 55px;
+  border-radius: 8px;
+}
+
 .main-table {
   -webkit-box-shadow: 0 3px 10px #ccc;
   -moz-box-shadow: 0 3px 10px #ccc;
