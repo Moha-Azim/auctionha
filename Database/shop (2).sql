@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 28, 2022 at 12:41 PM
+-- Generation Time: Jan 30, 2022 at 08:05 PM
 -- Server version: 10.4.22-MariaDB
 -- PHP Version: 8.0.13
 
@@ -20,6 +20,39 @@ SET time_zone = "+00:00";
 --
 -- Database: `shop`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `bidding`
+--
+
+CREATE TABLE `bidding` (
+  `ID` int(11) NOT NULL,
+  `New_Price` varchar(11) NOT NULL,
+  `Date_time` datetime NOT NULL,
+  `item_id` int(11) NOT NULL,
+  `member_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `bidding`
+--
+
+INSERT INTO `bidding` (`ID`, `New_Price`, `Date_time`, `item_id`, `member_id`) VALUES
+(1, '200', '2022-01-29 19:31:36', 23, 37),
+(2, '220', '2022-01-29 22:15:26', 23, 46),
+(3, '230', '2022-01-29 22:15:58', 23, 45),
+(4, '500', '2022-01-29 22:28:41', 21, 37),
+(5, '699', '2022-01-30 15:12:00', 23, 37),
+(6, '700', '2022-01-30 15:14:22', 23, 37),
+(7, '701', '2022-01-30 15:14:56', 23, 37),
+(8, '702', '2022-01-30 15:15:38', 23, 37),
+(9, '703', '2022-01-30 15:29:11', 23, 37),
+(12, '704', '2022-01-30 15:34:32', 23, 45),
+(13, '705', '2022-01-30 15:53:55', 23, 46),
+(14, '706', '2022-01-30 16:00:07', 23, 45),
+(15, '707', '2022-01-30 17:12:20', 23, 44);
 
 -- --------------------------------------------------------
 
@@ -72,7 +105,7 @@ CREATE TABLE `comments` (
 --
 
 INSERT INTO `comments` (`c_id`, `comment`, `status`, `comment_date`, `item_id`, `user_id`) VALUES
-(9, 'that was great', 1, '2022-01-11', 14, 44),
+(9, 'that was great', 1, '2022-01-11', 14, 47),
 (10, 'nice Item', 1, '2022-01-11', 12, 37),
 (11, ' this si adel', 1, '2022-01-21', 16, 46),
 (12, 'asdf', 1, '2022-01-21', 16, 3),
@@ -134,6 +167,7 @@ CREATE TABLE `users` (
   `Username` varchar(255) NOT NULL COMMENT 'Username to login',
   `Password` varchar(255) NOT NULL COMMENT 'Password to login',
   `Email` varchar(255) NOT NULL,
+  `wallet` mediumint(9) NOT NULL,
   `FullName` varchar(255) NOT NULL,
   `GroupID` int(11) NOT NULL DEFAULT 0 COMMENT 'Identify user Group',
   `TrustStatus` int(11) NOT NULL DEFAULT 0 COMMENT 'Seller Rank',
@@ -146,20 +180,28 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`UserID`, `Username`, `Password`, `Email`, `FullName`, `GroupID`, `TrustStatus`, `RegStatus`, `Date`, `avatar`) VALUES
-(1, 'mohammad', '601f1889667efaebb33b8c12572835da3f027f78', 'moha@yahoo.com', 'mohammad azim', 1, 0, 1, '2022-01-01', ''),
-(3, 'khale', '88ea39439e74fa27c09a4fc0bc8ebe6d00978392', 'mohzem332@yahoo.com', 'khaled ali khaled', 0, 0, 1, '2021-10-14', ''),
-(37, 'adel', '88ea39439e74fa27c09a4fc0bc8ebe6d00978392', 'adell@gmail.com', 'adeladel', 0, 0, 1, '2022-01-11', ''),
-(40, 'salllem', 'd7c670a0a01c3464fc62356686b9e13b52fd423e', 'salllem@gmail.com', 'sallem ahmad adil', 0, 0, 1, '2022-01-11', ''),
-(43, 'asdfd', '92429d82a41e930486c6de5ebda9602d55c39986', 'mohzem@yahoo.com', '', 0, 0, 1, '2022-01-20', ''),
-(44, 'heneen', '627172bda8b8c1544bfff78a643289ac91dc0b6b', 'haneen@yahoo.com', '', 0, 0, 1, '2022-01-20', ''),
-(45, 'ayatmo', '3917a68087ffdafb592a46375a1a6291bcf96aa1', 'ayatmo@yahoo.comayatmo', 'ayatmo  ahmad', 0, 0, 0, '2022-01-20', ''),
-(46, 'ahmad junior', '668be06c7ef7fe08f4831de0cf874d6bcd677a3b', 'ahmad@yahoo.com', '', 0, 0, 0, '2022-01-20', ''),
-(47, 'Khaldoon', 'bf241ea526fa6a795f459d99d8b1c5462a57df72', 'Khaldoon@yahoo.com', 'Khaldoon ahmad samy', 0, 0, 1, '2022-01-27', '8455324913253_wallpaperflare.com_wallpaper (17).jpg');
+INSERT INTO `users` (`UserID`, `Username`, `Password`, `Email`, `wallet`, `FullName`, `GroupID`, `TrustStatus`, `RegStatus`, `Date`, `avatar`) VALUES
+(1, 'mohammad', '601f1889667efaebb33b8c12572835da3f027f78', 'moha@yahoo.com', 10000, 'mohammad azim', 1, 0, 1, '2022-01-01', ''),
+(3, 'khale', '88ea39439e74fa27c09a4fc0bc8ebe6d00978392', 'mohzem332@yahoo.com', 500, 'khaled ali khaled', 0, 0, 1, '2021-10-14', ''),
+(37, 'adel', '88ea39439e74fa27c09a4fc0bc8ebe6d00978392', 'adell@gmail.com', 350, 'adeladel', 0, 0, 1, '2022-01-11', ''),
+(40, 'salllem', 'd7c670a0a01c3464fc62356686b9e13b52fd423e', 'salllem@gmail.com', 900, 'sallem ahmad adil', 0, 0, 1, '2022-01-11', ''),
+(43, 'asdfd', '92429d82a41e930486c6de5ebda9602d55c39986', 'mohzem@yahoo.com', 150, '', 0, 0, 1, '2022-01-20', ''),
+(44, 'heneen', '627172bda8b8c1544bfff78a643289ac91dc0b6b', 'haneen@yahoo.com', 900, '', 0, 0, 1, '2022-01-20', ''),
+(45, 'ayatmo', '3917a68087ffdafb592a46375a1a6291bcf96aa1', 'ayatmo@yahoo.comayatmo', 444, 'ayatmo  ahmad', 0, 0, 0, '2022-01-20', ''),
+(46, 'ahmad junior', '668be06c7ef7fe08f4831de0cf874d6bcd677a3b', 'ahmad@yahoo.com', 756, '', 0, 0, 0, '2022-01-20', ''),
+(47, 'Khaldoon', 'bf241ea526fa6a795f459d99d8b1c5462a57df72', 'Khaldoon@yahoo.com', 410, 'Khaldoon ahmad samy', 0, 0, 1, '2022-01-27', '8455324913253_wallpaperflare.com_wallpaper (17).jpg');
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `bidding`
+--
+ALTER TABLE `bidding`
+  ADD PRIMARY KEY (`ID`),
+  ADD KEY `bidding_user` (`member_id`),
+  ADD KEY `bidding_item` (`item_id`);
 
 --
 -- Indexes for table `categories`
@@ -196,6 +238,12 @@ ALTER TABLE `users`
 --
 
 --
+-- AUTO_INCREMENT for table `bidding`
+--
+ALTER TABLE `bidding`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+
+--
 -- AUTO_INCREMENT for table `categories`
 --
 ALTER TABLE `categories`
@@ -222,6 +270,13 @@ ALTER TABLE `users`
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `bidding`
+--
+ALTER TABLE `bidding`
+  ADD CONSTRAINT `bidding_item` FOREIGN KEY (`item_id`) REFERENCES `items` (`Item_ID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `bidding_user` FOREIGN KEY (`member_id`) REFERENCES `users` (`UserID`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `comments`

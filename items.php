@@ -30,6 +30,9 @@ if ($count > 0) {
                 <li>
                     <i class="far fa-money-bill-alt fa-fw"></i>
                     <span>Price</span> : $<?php echo $item['Price'] ?>
+                    <a href="bidding.php?itemid=<?php echo $itemid ?>" class="btn btn-primary pull-right bidding-btn"
+                        role="button">Bidding
+                        Page</a>
                 </li>
                 <li>
                     <i class=" fa fa-building fa-fw"></i>
@@ -107,14 +110,22 @@ if ($count > 0) {
     <!--End Add Comment-->
     <hr class="custom-hr">
     <?php   // All comment from database
-        $stmt = $con->prepare("SELECT comments.*,users.Username FROM comments INNER JOIN users ON users.UserID = comments.user_id WHERE Status = 1 AND Item_ID = ? ORDER BY c_id DESC");
+        $stmt = $con->prepare("SELECT comments.*,users.* FROM comments INNER JOIN users ON users.UserID = comments.user_id WHERE Status = 1 AND Item_ID = ? ORDER BY c_id DESC");
         $stmt->execute(array($item['Item_ID']));
         $comments = $stmt->fetchAll();
         foreach ($comments as $comment) { ?>
     <div class="comment-box">
         <div class="row">
             <div class="col-sm-2 text-center">
-                <img class="img-responsive img-thumbnail img-circle center-block" src="imgtest.png" alt="">
+
+                <img class="img-responsive img-thumbnail img-circle center-block" src="<?php
+                                                                                                if (empty($comment['avatar'])) {
+                                                                                                    echo "admin/uploaded/avatars/999999999_default.png";
+                                                                                                } else {
+                                                                                                    echo 'admin/uploaded/avatars/' . $comment['avatar'];
+                                                                                                }
+
+                                                                                                ?>" alt="">
                 <?php echo $comment['Username']; ?>
             </div>
             <div class="col-sm-10">

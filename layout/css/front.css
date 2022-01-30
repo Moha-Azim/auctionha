@@ -99,7 +99,7 @@ form.signup input.form-control:focus {
 }
 
 .my-image {
-  width: 32px;
+  width: 35px;
   height: 32px;
 }
 /*End Header*/
@@ -206,6 +206,7 @@ form.signup input.form-control:focus {
 .item-box .caption p {
   height: 44px;
   max-height: 44px;
+  overflow: hidden;
 }
 /*End Profile Page*/
 
@@ -239,8 +240,8 @@ form.signup input.form-control:focus {
 .add-comment textarea {
   display: block;
   margin-bottom: 10px;
-  width: 500px;
-  height: 120px;
+  width: 90%;
+  height: 60px;
 }
 
 .comment-box {
@@ -248,7 +249,8 @@ form.signup input.form-control:focus {
 }
 
 .comment-box img {
-  max-width: 100px;
+  height: 80px;
+  max-width: 85px;
   margin-bottom: 10px;
 }
 
@@ -295,7 +297,32 @@ form.signup input.form-control:focus {
   color: #666;
   margin-right: 5px;
 }
+
+.bidding-btn {
+  padding: 3px 15px;
+}
 /*End Show item Page*/
+
+/*Start Bid Page*/
+
+.add-bid .bid-price .current-bid {
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.add-bid .bid-price .current-bid .last-bid {
+  color: #5cb85c;
+  font-size: 14px;
+}
+.add-bid .bid-price .asterisk {
+  font-size: 22px;
+  position: absolute;
+  right: 69px;
+  top: 42px;
+  color: #d20707;
+}
+
+/*End Bid Page*/
 
 /*Start Our custem */
 

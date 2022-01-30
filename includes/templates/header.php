@@ -19,8 +19,20 @@
     <div class="upper-bar">
         <div class="container">
             <?php
-            if (isset($_SESSION['user'])) { ?>
-            <img class="my-image image-thumbnail img-circle " src="imgtest.png" alt="">
+            if (isset($_SESSION['user'])) {
+
+                $header_stmt = $con->prepare('SELECT * FROM users WHERE UserID = ?');
+                $header_stmt->execute(array($_SESSION['uid']));
+                $user_info =  $header_stmt->fetch();
+
+            ?>
+            <img class="my-image image-thumbnail img-circle " src="<?php
+                                                                        if (empty($user_info['avatar'])) {
+                                                                            echo "admin/uploaded/avatars/999999999_default.png";
+                                                                        } else {
+                                                                            echo "admin/uploaded/avatars/" . $user_info['avatar'] . ">";
+                                                                        }
+                                                                        ?>" alt="">
             <div class="btn-group my-info">
 
                 <span class="btn dropdown-toggle" data-toggle="dropdown">
