@@ -10,6 +10,7 @@ include "init.php";
 
 if (isset($_SESSION['user'])) {
 
+    // to refresh the page every two min
     $url1 = $_SERVER['REQUEST_URI'];
     header("Refresh: 120; URL=$url1");
 
@@ -76,21 +77,33 @@ if (isset($_SESSION['user'])) {
 
 
     <?php
+            // set the time zone
+            date_default_timezone_set("Asia/Amman");
 
             // to count the bidding and find the max bid on this item
             $stmtb = $con->prepare('SELECT COUNT(*) AS counte , MAX(New_Price) AS current FROM bidding WHERE item_id = ?;');
             $stmtb->execute(array($itemid));
             $current = $stmtb->fetch();
 
-            // to select the id how make the last bid if is he this user will  echo span says you make the last bid
-            $stmtMaxprice = $con->prepare('SELECT member_id FROM bidding WHERE item_id = 23 AND New_Price = ?;');
-            $stmtMaxprice->execute(array($current['current']));
-            $id_Maxprice =  $stmtMaxprice->fetch();
+            //if there is no bid on the item the current bid will be the price on this item
+            if ($current['counte'] == 0) {
+                $current['current'] =  $item['Price'];
+            }
+
+            // to select the id who make the last bid if is he this user will  echo span says you make the last bid
+            $stmtMaxprice = $con->prepare('SELECT member_id FROM bidding WHERE item_id = ? AND New_Price = ?;');
+            $stmtMaxprice->execute(array($itemid, $current['current']));
+            $id_Lastbid =  $stmtMaxprice->fetch();
 
             // to Check how much the user have in the wallet 
             $wallet = $con->prepare('SELECT wallet FROM users WHERE UserID = ?');
             $wallet->execute(array($_SESSION['uid']));
             $wallet_bid = $wallet->fetch();
+
+            // to select the time
+            $now = new DateTime();
+            $bid_time_remaining = new DateTime($item['end_biddingDate']);
+            $interval = $bid_time_remaining->diff($now);
 
 
             // bidding inserting
@@ -103,17 +116,26 @@ if (isset($_SESSION['user'])) {
 
                 $formErrors = array();
 
+
+                if ($now > $bid_time_remaining) {
+                    $formErrors[] = 'Sorry bidding time is over';
+                }
+
                 if (empty($_POST['bid'])) {
                     $formErrors[] = 'You have to put a number';
                 }
                 if (!is_numeric($_POST['bid'])) {
                     $formErrors[] = 'use numbers only';
                 }
-                if ($id_Maxprice['member_id'] == $_SESSION['uid']) {
+
+                /* the @ for ignoring the warning that will be showen if user add bid for first time on item 
+                the warning about the var $id_Lastbid['member_id'] have no value cuse there is no bid yet on biddin table 
+                */
+                if (@$id_Lastbid['member_id'] == $_SESSION['uid']) {
                     $formErrors[] = 'You did the last bid You can\'t make another one';
                 }
 
-                if ($_POST['bid'] > $wallet_bid['wallet']) {
+                if (is_numeric($_POST['bid'])   &&  $_POST['bid'] > $wallet_bid['wallet']) {
                     $formErrors[] = 'You did that much mony in the wallet';
                 }
 
@@ -122,6 +144,8 @@ if (isset($_SESSION['user'])) {
                 }
 
                 if (empty($formErrors)) {
+
+
                     if (!empty($_POST['bid'])) {
                         $stmts = $con->prepare("INSERT INTO bidding (New_Price,Date_time,item_id,member_id) VALUES (:New_Price,NOW(),:itemid,:userid)");
                         $stmts->execute(array(
@@ -132,6 +156,13 @@ if (isset($_SESSION['user'])) {
                     }
 
                     if ($stmts) {
+                        // to add one more hour if user bid and the time will end in less than one hour
+                        @$sec = (strtotime($item['end_biddingDate']) - strtotime(date("Y-m-d H:i:s")));
+                        if ($sec <= 3600) {
+                            $hourp =  $con->prepare("UPDATE  items SET end_biddingDate = ADDTIME(end_biddingDate, '1:00:00') WHERE Item_ID = ?");
+                            $hourp->execute(array($itemid));
+                        }
+
                         header("Location:" . $_SERVER['PHP_SELF'] . '?itemid=' . $itemid);
                     } else {
                         echo '<div class="alert alert-danger"> No record Inserted</div>';
@@ -139,12 +170,32 @@ if (isset($_SESSION['user'])) {
                 }
             }
 
+            if ($now < $bid_time_remaining) {
             ?>
     <div class="row justify-content-md-center add-bid">
         <div class="col col-md-3">
             <p>Item Condition : New</p>
-            <p> Time left: 3d 11h 50m</p>
-            <span> Sunday, 10:40PM </span>
+            <p> Time left: <?php
+
+
+                                        // to check if the remaining time 0 month  or 0 day won't print it the zero value
+                                        if ($now < $bid_time_remaining) {
+                                            if ($interval->format('%m') != 0) {
+                                                echo $interval->format('%m Month, %d days , %h hours, %i minutes');
+                                            } elseif ($interval->format('%d') != 0) {
+                                                echo $interval->format(' %d days , %h hours, %i minutes');
+                                            } elseif ($interval->format('%h') != 0) {
+                                                echo $interval->format('%h hours, %i minutes');
+                                            } elseif ($interval->format('%i') != 0) {
+                                                echo $interval->format(' %i minutes');
+                                            }
+                                        } else {
+                                            echo 'the time is up';
+                                        }
+
+
+                                        ?></p>
+            <span> <?php echo "End Date: " . $item['end_biddingDate'] ?></span>
         </div>
         <div class="col-md-9">
             <div class="col-md-2 the-bid">
@@ -154,12 +205,13 @@ if (isset($_SESSION['user'])) {
             <div class="col-md-4 bid-price">
                 <p class="current-bid"><?php echo "$" . $current['current'] ?>
 
-                    <?php  // check if the last bid from this user
-
-                            if ($id_Maxprice['member_id'] == $_SESSION['uid']) {
-                                echo "<span class='last-bid'> You Did The Last Bid </span>";
-                            }
-                            ?>
+                    <?php  // check if the last bid from this user but check first if there is bid on this item
+                                if ($current['counte'] > 0) {
+                                    if ($id_Lastbid['member_id'] == $_SESSION['uid']) {
+                                        echo "<span class='last-bid'> You Did The Last Bid </span>";
+                                    }
+                                }
+                                ?>
                 </p>
 
                 <form action="<?php echo $_SERVER['PHP_SELF'] . '?itemid=' . $itemid ?>" method="POST">
@@ -176,25 +228,24 @@ if (isset($_SESSION['user'])) {
 
     </div>
     <?php
-            if (!empty($formErrors)) {
-                foreach ($formErrors as $error) {
-                    echo "<div class='the-errors'><div class='msg error'>" . $error . "</div></div>";
+                if (!empty($formErrors)) {
+                    foreach ($formErrors as $error) {
+                        echo "<div class='the-errors'><div class='msg error'>" . $error . "</div></div>";
+                    }
                 }
-            }
-            ?>
+                ?>
 </div>
 
-
-
-
-
-
 <?php
+            } else {
+
+                echo '<div class="alert alert-danger text-center"><strong>The Time is over  You Can\'t bid on this item</strong></div>';
+            }
+        } else {
+            redirectHome('<div class="alert alert-danger">There is No Item Here Or the Item Need Approval form Admin</div>', 'login.php');
+        }
     } else {
-        redirectHome('<div class="alert alert-danger">There is No Item Here Or the Item Need Approval form Admin</div>', 'login.php');
+        redirectHome('<div class="alert alert-danger">You Should Login in or Sign Up to reach this page</div>', 'login.php');
     }
-} else {
-    redirectHome('<div class="alert alert-danger">You Should Login in or Sign Up to reach this page</div>', 'login.php');
-}
-include $temp . "footer.php";
-ob_end_flush();
+    include $temp . "footer.php";
+    ob_end_flush();
