@@ -60,7 +60,7 @@ if (isset($_SESSION['userloged'])) {
                         echo $catego['Allow_Ads'] == '1' ? "<span class='advertising'><i class='fas fa-ban'></i> Ads Blocked</span>" : null;
 
 
-
+                        // to select the sub-categories
                         $stmt = $con->prepare("SELECT * FROM categories WHERE parent ={$catego['ID']}");
                         $stmt->execute();
                         $childCats = $stmt->fetchAll();

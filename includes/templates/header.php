@@ -78,11 +78,64 @@
             <div class="collapse navbar-collapse" id="app-nav" aria-expanded="false" style="height: 1px;">
                 <ul class="nav navbar-nav navbar-right">
                     <?php
+
+                    // to put $grayActive class if the user press on one of the main category and color it to gray
                     foreach (getCat('WHERE parent = 0') as $categ) {
-                        echo "<li> <a href='categories.php?catid=" . $categ['ID'] . "&pagename=" . str_replace(' ', '-', $categ['Name']) . "'>" . $categ['Name'] . "</a></li>";
+                        if (isset($_GET['catid']) &&  $_GET['catid'] == $categ['ID']) {
+                            $grayActive = "gray-active";
+                        } else {
+                            $grayActive = null;
+                        }
+                        echo "<li class='$grayActive'> <a href='categories.php?catid=" . $categ['ID'] . "&pagename=" . str_replace(' ', '-', $categ['Name']) . "'>" . $categ['Name'] . "</a></li> ";
                     }
                     ?>
                 </ul>
             </div>
-        </div>
+
     </nav>
+
+
+
+
+
+
+    <?php
+
+    // to select the sub-categories if the parent have sub category
+    if (isset($_GET['catid'])) {
+        $stmt = $con->prepare("SELECT * FROM categories WHERE parent ={$_GET['catid']}");
+        $stmt->execute();
+        $childCats = $stmt->fetchAll();
+        if (!empty($childCats)) {
+            echo  "<div class='container'><ul class='nav nav-pills  justify-content-center sub-cate' >";
+            foreach ($childCats as $childcat) {
+                echo "<li class='nav-item'>";
+                echo "<a class='nav-link' href='categories.php?catid=" . $childcat["ID"] . "&pagename=" . $childcat["Name"] . "'>" . $childcat["Name"] . " </a>";
+                echo "</li>";
+            }
+            echo "</ul>
+    </div>";
+        }
+    }
+    ?>
+
+
+
+
+
+    <!-- 
+    // to select the sub-categories
+                        $stmt = $con->prepare("SELECT * FROM categories WHERE parent ={$catego['ID']}");
+                        $stmt->execute();
+                        $childCats = $stmt->fetchAll();
+                        if (!empty($childCats)) {
+                            echo "<h4 class='child-head'>Child Categories :</h4>";
+                            echo  "<ul class='list-unstyled  child-cats'>";
+                            foreach ($childCats as $childcat) {
+                                echo "<li class='child-link'> 
+                                <a href='categories.php?do=edit&catid=" . $childcat['ID'] . "' > " . $childcat['Name'] . "</a>
+                                <a href='categories.php?do=delete&catid=" . $childcat['ID'] . "' class='show-delete confirm '><i class='fa fa-close'></i> Delete</a>
+                                </li>";
+                            }
+                            echo  "</ul>";
+                        } -->

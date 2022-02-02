@@ -20,7 +20,12 @@ include "init.php";
     if (isset($_GET['catid']) && is_numeric($_GET['catid'])) {
         $items = intval($_GET['catid']);
 
-        foreach (getItems('Cat_ID', $items, 1) as $item) { // to get  only itmes in this category
+        $stmt = $con->prepare("SELECT * FROM items WHERE Cat_ID IN ( SELECT ID FROM categories WHERE ID = ? OR parent = ?) AND Approve = 1 ");
+        $stmt->execute(array($items, $items));
+        $allItmes = $stmt->fetchAll();
+
+
+        foreach ($allItmes as $item) { // to get  only itmes in this category
             echo '<div class="col-sm-6 col-md-3">';
             echo '<div class="thumbnail item-box">';
             echo '<span class="price-tag">$' . $item['Price'] . '</span>';

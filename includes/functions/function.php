@@ -65,10 +65,11 @@ getItems()  function to get the ({[ AD ]})  item in choosen category   just AD  
 
 $catid ==> the id of the category to get the items from it
 
+
 AD   AD    AD   AD   AD for advertising  only
 */
 
-function getItems($where, $value, $approve = NULL)
+function getItems($where, $value, $approve = NULL,)
 {
 
     $sql = $approve == 1 ? 'AND Approve = 1' : '';
