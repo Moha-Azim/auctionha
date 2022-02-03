@@ -215,7 +215,7 @@ form.signup input.form-control:focus {
 
 .information ul li > span {
   display: inline-block;
-  width: 120px;
+  width: 130px;
 }
 
 .information .btn {
@@ -308,6 +308,15 @@ form.signup input.form-control:focus {
   padding: 3px 5px;
 }
 
+.item-box .approve-edit {
+  position: absolute;
+  top: 72px;
+  left: 0px;
+  background-color: #53ce59;
+  color: #fff;
+  padding: 3px 5px;
+}
+
 .comment-box .date {
   text-align: right;
   font-size: 13px;
@@ -349,6 +358,14 @@ form.signup input.form-control:focus {
 }
 
 /*End Bid Page*/
+
+/*Start editUser Page*/
+.show-pass {
+  position: absolute;
+  right: -10px;
+  top: 15px;
+}
+/*End editUser Page*/
 
 /*Start Our custem */
 

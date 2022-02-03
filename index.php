@@ -13,7 +13,14 @@ include "init.php";
         echo '<div class="col-sm-6 col-md-3">';
         echo '<div class="thumbnail item-box">';
         echo '<span class="price-tag">$' . $item['Price'] . '</span>';
-        echo '<img class="img-responsive" src="imgtest.png" alt="">';
+
+        if (empty($item['mainImg'])) {
+            $src = "admin/uploaded/itemsImg/999999999_default.png";
+        } else {
+            $src = "admin/uploaded/itemsImg/" . $item['mainImg'];
+        }
+
+        echo '<img class="img-responsive" src="' . $src . '" alt="">';
         echo '<div class="caption">';
         echo '<a href="items.php?itemid=' . $item['Item_ID'] . '"><h3> ' . $item['Name'] . '</h3></a>';
         echo '<p>' . $item['Description'] . '</p>';

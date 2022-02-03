@@ -30,7 +30,7 @@
                                                                         if (empty($user_info['avatar'])) {
                                                                             echo "admin/uploaded/avatars/999999999_default.png";
                                                                         } else {
-                                                                            echo "admin/uploaded/avatars/" . $user_info['avatar'] . ">";
+                                                                            echo "admin/uploaded/avatars/" . $user_info['avatar'];
                                                                         }
                                                                         ?>" alt="">
             <div class="btn-group my-info">

@@ -174,7 +174,7 @@ if (isset($_SESSION['userloged'])) {
             $username = $_POST['username'];
             $email    = $_POST['email'];
             $fullname = $_POST['full'];
-            $pass   = $_POST['password'];
+            $pass     = $_POST['password'];
 
             // Password  hash
             $hashPass = sha1($_POST['password']);

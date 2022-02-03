@@ -18,7 +18,11 @@ if ($count > 0) {
 <div class="container">
     <div class="row">
         <div class="col-md-3">
-            <img class="img-responsive img-thumbnail center-block" src="imgtest.png" alt="">
+            <img class="img-responsive img-thumbnail center-block" src="<?php if (empty($item['mainImg'])) {
+                                                                                echo "admin/uploaded/itemsImg/999999999_default.png";
+                                                                            } else {
+                                                                                echo "admin/uploaded/itemsImg/" . $item['mainImg'];
+                                                                            }  ?>" alt="">
         </div>
         <div class="col-md-9 item-info">
             <h2><?php echo $item['Name'] ?></h2>
@@ -147,7 +151,7 @@ if ($count > 0) {
 
 <?php
 } else {
-    redirectHome('<div class="alert alert-danger">There is No Item Here Or the Item Need Approval form Admin</div>', 'login.php');
+    redirectHome('<div class="alert alert-danger">There is No Item Here Or the Item Need Approval form Admin</div>', 'back');
 }
 include $temp . "footer.php";
 ob_end_flush();

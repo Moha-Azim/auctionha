@@ -8,6 +8,9 @@ if (isset($_SESSION['user'])) {
     $getUser = $con->prepare("SELECT * FROM users WHERE Username =?");
     $getUser->execute(array($sessionUser)); // the variable $sessionUser exsist in init.php file
     $info = $getUser->fetch();
+
+    // fetch all item for this user by betItems function in the fuction.php file i put it here to count the ads this user was make by ==> count($userItems)
+    $userItems = getItems('Member_ID', $info['UserID']);
 ?>
 <h1 class="text-center"> My Profile</h1>
 <div class="information block">
@@ -15,16 +18,38 @@ if (isset($_SESSION['user'])) {
         <div class="panel panel-primary">
             <div class="panel-heading">My information</div>
             <div class="panel-body">
-                <ul class="list-unstyled">
-                    <li> <i class="fa fa-unlock-alt fa-fw"></i> <span>Name</span> : <?php echo $info['Username']; ?>
-                    </li>
-                    <li> <i class="fa fa-envelope fa-fw"></i> <span>Email</span>: <?php echo $info['Email']; ?></li>
-                    <li> <i class="fa fa-user-alt fa-fw"></i> <span>Full Name</span> : <?php echo $info['FullName']; ?>
-                    </li>
-                    <li> <i class="fa fa-calendar-alt fa-fw"></i> <span>Date</span> : <?php echo $info['Date']; ?> </li>
-                    <li> <i class="fa fa-tags fa-fw"></i> <span>Fav Category</span> : </li>
-                </ul>
-                <a href="#" class="btn btn-default">Edit information</a>
+
+                <div class="row">
+                    <div class="col-sm-3">
+                        <img class="img-responsive img-thumbnail center-block" src="<?php
+                                                                                        if (empty($info['avatar'])) {
+                                                                                            echo "admin/uploaded/avatars/999999999_default.png";
+                                                                                        } else {
+                                                                                            echo "admin/uploaded/avatars/" . $user_info['avatar'];
+                                                                                        }
+                                                                                        ?>" alt="">
+                    </div>
+                    <div class="col-sm-9">
+                        <ul class="list-unstyled">
+                            <li> <i class="fa fa-unlock-alt fa-fw"></i> <span>Name</span> :
+                                <?php echo $info['Username']; ?>
+                            </li>
+                            <li> <i class="fa fa-envelope fa-fw"></i> <span>Email</span>: <?php echo $info['Email']; ?>
+                            </li>
+                            <li> <i class="fa fa-user-alt fa-fw"></i> <span>Full Name</span> :
+                                <?php echo $info['FullName']; ?>
+                            </li>
+                            <li> <i class="fa fa-calendar-alt fa-fw"></i> <span>Registration Date</span> :
+                                <?php echo $info['Date']; ?> </li>
+                            <li> <i class="fa fa-tags fa-fw"></i> <span>Number of ads</span>
+                                : <?php echo count($userItems) ?>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <a href="editUser.php?edit=profile" class="btn btn-success"><i class="fas fa-user-edit"></i> Edit
+                    information</a>
             </div>
         </div>
     </div>
@@ -37,16 +62,23 @@ if (isset($_SESSION['user'])) {
             <div class="panel-body">
 
                 <?php
-                    if (!empty(getItems('Member_ID', $info['UserID'], 0))) {
+                    if (!empty($userItems)) {
                         echo '<div class="row">';
-                        foreach (getItems('Member_ID', $info['UserID']) as $item) { // to get  only itmes in this category
+                        foreach ($userItems  as $item) { // to get  only itmes in this category
                             echo '<div class="col-sm-6 col-md-3">';
                             echo '<div class="thumbnail item-box">';
                             if ($item['Approve'] == 0) {
                                 echo '<span class="approve-status">Waiting Approval</span>';
+                                echo '<a href="editUser.php?edit=items&itemid=' . $item['Item_ID'] . '"><span class="approve-edit" ><i class="fas fa-user-edit"></i> Edit</span></a>';
                             }
                             echo '<span class="price-tag">$' . $item['Price'] . '</span>';
-                            echo '<img class="img-responsive" src="imgtest.png" alt="">';
+
+                            if (empty($item['mainImg'])) {
+                                $src = "admin/uploaded/itemsImg/999999999_default.png";
+                            } else {
+                                $src = "admin/uploaded/itemsImg/" . $item['mainImg'];
+                            }
+                            echo '<img class="img-responsive" src="' . $src . '" alt="">';
                             echo '<div class="caption">';
                             echo '<h3><a href="items.php?itemid=' . $item['Item_ID'] . '">' . $item['Name'] . '</a></h3>';
                             echo '<p>' . $item['Description'] . '</p>';

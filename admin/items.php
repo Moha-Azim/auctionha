@@ -66,7 +66,7 @@ if (isset($_SESSION['userloged'])) {
 
     ?><h1 class="text-center">Add Item</h1>
 <div class="container">
-    <form class="form-horizontal" action="?do=insert" method="POST">
+    <form class="form-horizontal" action="?do=insert" enctype="multipart/form-data" method="POST">
 
         <!-- Start Name Field -->
         <div class="form-group form-group-lg">
@@ -185,6 +185,15 @@ if (isset($_SESSION['userloged'])) {
         </div>
         <!-- End Tags Field -->
 
+        <!-- Start Avatar Field -->
+        <div class="form-group form-group-lg">
+            <label class="col-sm-2 control-label">Item Image</label>
+            <div class="col-sm-10 col-md-6">
+                <input type="file" name="avatar" class="form-control" required />u
+            </div>
+        </div>
+        <!-- End Avatar Field -->
+
         <!-- Start Save Field -->
         <div class="form-group form-group-lg">
             <div class="col-sm-offset-2 col-sm-10">
@@ -206,13 +215,26 @@ if (isset($_SESSION['userloged'])) {
             echo '<div class="container">';
 
 
+            $avatarName = $_FILES['avatar']['name'];
+            $avatarType = $_FILES['avatar']['type'];
+            $avatarTmp  = $_FILES['avatar']['tmp_name'];
+            $avatarSize = $_FILES['avatar']['size'];
+
+            // extract the extension and make it to lower case  and ignore the waring if  there is no image
+            @$extention = strtolower(pathinfo($avatarName)['extension']);
+
+
+            //List Of Allowed File Typed To Upload
+            $avatarExtension = array("jpeg", "jpg", "png", "gif");
+
+
             // get the result from the post method
             $name     = $_POST['name'];
             $desc     = $_POST['description'];
             $price    = $_POST['price'];
             $country  = $_POST['country'];
             $status   = $_POST['status'];
-            $members   = $_POST['members'];
+            $members  = $_POST['members'];
             $category = $_POST['category'];
             $tags     = $_POST['tags'];
 
@@ -250,15 +272,24 @@ if (isset($_SESSION['userloged'])) {
                 $formErrors[] = 'You Must Choos The Category';
             }
 
+            if (!in_array($extention, $avatarExtension) && !empty($avatarName)) {
+                $formErrors[] = 'The Image Extension Not Allowed You can upload image "jpeg", "jpg", "png", "gif" Only';
+            }
+
+            if (@$avatarSize > 4194304) {
+                $formErrors[] = 'The Image Can\'t be larger than 4MB';
+            }
+
             foreach ($formErrors as $errors) {
                 echo "<div class='alert alert-danger'>" . $errors . "</div>";
             }
 
             if (empty($formErrors)) {
 
+                $avatar = rand(0, 9999999999999) . "_" . $avatarName;
+                move_uploaded_file($avatarTmp, "uploaded\itemsImg\\" . $avatar);
 
-
-                $stmt = $con->prepare("INSERT INTO items (Name,Description,Price,Conutry_Made,Status,Add_Date ,Cat_ID,Member_ID,tags) VALUES (:name , :desc , :price , :country ,:status,now(),:category,:member,:tags)");
+                $stmt = $con->prepare("INSERT INTO items (Name,Description,Price,Conutry_Made,Status,Add_Date ,Cat_ID,Member_ID,tags,mainImg) VALUES (:name , :desc , :price , :country ,:status,now(),:category,:member,:tags ,:mainImg)");
                 $stmt->execute(array(
                     ':name'     => $name,
                     ':desc'     => $desc,
@@ -267,8 +298,8 @@ if (isset($_SESSION['userloged'])) {
                     ':status'   => $status,
                     ':category' => $category,
                     ':member'   => $members,
-                    ':tags'     => $tags
-
+                    ':tags'     => $tags,
+                    ':mainImg'  => $avatar
                 ));
 
                 $counter = $stmt->rowCount();
@@ -298,14 +329,14 @@ if (isset($_SESSION['userloged'])) {
 
 <h1 class="text-center">Edit Item</h1>
 <div class="container">
-    <form class="form-horizontal" action="items.php?do=update" method="POST">
-        <input type="hidden" name="item_id" value="<?php echo $item['Item_ID'] ?>">
+    <form class="form-horizontal" action="items.php?do=update" enctype="multipart/form-data" method="POST">
+        <input type="hidden" name="item_id" value="<?php echo $item['Item_ID']; ?>">
         <!-- Start Name Field -->
         <div class="form-group form-group-lg">
             <label class="col-sm-2 control-label">Item Name</label>
             <div class="col-sm-10 col-md-6">
                 <input type="text" name="name" class="form-control" required="required" placeholder="Add Item Name"
-                    autocomplete="off" value=" <?php echo $item['Name'] ?>" />
+                    autocomplete="off" value="<?php echo $item['Name']; ?>" />
             </div>
         </div>
         <!-- End Name Field -->
@@ -316,7 +347,7 @@ if (isset($_SESSION['userloged'])) {
             <label class="col-sm-2 control-label">Item Description</label>
             <div class="col-sm-10 col-md-6">
                 <input type="text" name="description" class="form-control" required="required"
-                    placeholder="Add Description" autocomplete="off" value=" <?php echo $item['Description'] ?>" />
+                    placeholder="Add Description" autocomplete="off" value="<?php echo $item['Description']; ?>" />
             </div>
         </div>
         <!-- End Description Field -->
@@ -327,7 +358,7 @@ if (isset($_SESSION['userloged'])) {
             <label class="col-sm-2 control-label">Item Price</label>
             <div class="col-sm-10 col-md-6">
                 <input type="text" name="price" class="form-control" required="required" placeholder="Add Item Price"
-                    autocomplete="off" value=" <?php echo $item['Price'] ?>" />
+                    autocomplete="off" value="<?php echo $item['Price']; ?>" />
             </div>
         </div>
         <!-- End Price Field -->
@@ -338,7 +369,7 @@ if (isset($_SESSION['userloged'])) {
             <label class="col-sm-2 control-label">Country Made</label>
             <div class="col-sm-10 col-md-6">
                 <input type="text" name="country" class="form-control" required="required"
-                    placeholder="Add Item Country" autocomplete="on" value=" <?php echo $item['Conutry_Made'] ?>" />
+                    placeholder="Add Item Country" autocomplete="on" value="<?php echo $item['Conutry_Made'] ?>" />
             </div>
         </div>
         <!-- End Country Field -->
@@ -424,6 +455,15 @@ if (isset($_SESSION['userloged'])) {
         </div>
         <!-- End Tags Field -->
 
+        <!-- Start Avatar Field -->
+        <div class="form-group form-group-lg">
+            <label class="col-sm-2 control-label">Item Image</label>
+            <div class="col-sm-10 col-md-6">
+                <input type="file" name="avatar" class="form-control" />
+            </div>
+        </div>
+        <!-- End Avatar Field --
+
         <!-- Start Save Field -->
         <div class="form-group form-group-lg">
             <div class="col-sm-offset-2 col-sm-10">
@@ -498,6 +538,27 @@ if (isset($_SESSION['userloged'])) {
             echo '<h1 class="text-center">Update Items</h1>';
             echo '<div class="container">';
 
+            $getUser = $con->prepare("SELECT mainImg FROM items WHERE Item_ID =?");
+            $getUser->execute(array($_POST['item_id']));
+            $info = $getUser->fetch();
+
+            // Upload Variables if the user won't edit the avatar 
+            if (empty($_FILES['avatar']['name'])) {
+                $samePic = $info['mainImg'];
+            }
+
+            $avatarName = $_FILES['avatar']['name'];
+            $avatarType = $_FILES['avatar']['type'];
+            $avatarTmp  = $_FILES['avatar']['tmp_name'];
+            $avatarSize = $_FILES['avatar']['size'];
+
+            // extract the extension and make it to lower case  and ignore the waring if  there is no image
+            @$extention = strtolower(pathinfo($avatarName)['extension']);
+
+
+            //List Of Allowed File Typed To Upload
+            $avatarExtension = array("jpeg", "jpg", "png", "gif");
+
 
             // get the result from the post method
             $name     = $_POST['name'];
@@ -537,8 +598,17 @@ if (isset($_SESSION['userloged'])) {
             if ($members == "0") {
                 $formErrors[] = 'You Must Choos The Member';
             }
+
             if ($category == "0") {
                 $formErrors[] = 'You Must Choos The Category';
+            }
+
+            if (!in_array($extention, $avatarExtension) && !empty($avatarName)) {
+                $formErrors[] = 'The Image Extension Not Allowed You can upload image "jpeg", "jpg", "png", "gif" Only';
+            }
+
+            if (@$avatarSize > 4194304) {
+                $formErrors[] = 'The Image Can\'t be larger than 4MB';
             }
 
             foreach ($formErrors as $errors) {
@@ -546,8 +616,16 @@ if (isset($_SESSION['userloged'])) {
             }
 
             if (empty($formErrors)) {
-                $stmt = $con->prepare("UPDATE items SET Name = ? , Description = ?, Price = ? , Conutry_Made = ?,Status =? ,Cat_ID=?,Member_ID=? , tags=? WHERE Item_ID = ? ");
-                $stmt->execute(array($name, $desc, $price, $country,  $status, $category, $members, $tags, $item_id));
+
+                $avatar = rand(0, 9999999999999) . "_" . $avatarName;
+                move_uploaded_file($avatarTmp, "uploaded\itemsImg\\" . $avatar);
+                if (isset($samePic)) {
+                    $avatar = $samePic; // if the user want the same pic (do not want to change the pic)
+                }
+
+
+                $stmt = $con->prepare("UPDATE items SET Name = ? , Description = ?, Price = ? , Conutry_Made = ?,Status =? ,Cat_ID=?,Member_ID=? , tags=?,mainImg=? WHERE Item_ID = ? ");
+                $stmt->execute(array($name, $desc, $price, $country,  $status, $category, $members, $tags, $avatar, $item_id));
                 $row = $stmt->fetch();
                 $counter =  $stmt->rowCount();
                 if ($stmt) {
