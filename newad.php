@@ -32,6 +32,8 @@ if (isset($_SESSION['user'])) {
         $status     = filter_var($_POST['status'], FILTER_SANITIZE_NUMBER_INT);
         $tags       = filter_var($_POST['tags'], FILTER_SANITIZE_STRING);
 
+
+
         $formErrors = array();
 
 
@@ -61,6 +63,10 @@ if (isset($_SESSION['user'])) {
         }
         if (@$avatarSize > 4194304) {
             $formErrors[] = 'The Image Can\'t be larger than 4MB';
+        }
+        // to check the end bid date more than 24 hour from now
+        if ((strtotime($_POST["endbid"]) - strtotime(date("Y-m-d H:i:s"))) < 86400) {
+            $formErrors[] = 'End Bid should be after more then 24 hours';
         }
 
 
@@ -205,6 +211,7 @@ if (isset($_SESSION['user'])) {
                             </div>
                             <!-- End Avatar Field -->
 
+                            <!--Start endBid Field -->
                             <div class="form-group form-group-lg">
                                 <label class="col-sm-3 control-label">End bid Date</label>
                                 <div class="col-sm-10 col-md-9">
@@ -212,7 +219,7 @@ if (isset($_SESSION['user'])) {
                                         autocomplete="on" required />
                                 </div>
                             </div>
-                            <!-- End Country Field -->
+                            <!-- End endBid Field -->
 
                             <!-- Start Save Field -->
                             <div class="form-group form-group-lg">

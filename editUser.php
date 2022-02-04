@@ -210,8 +210,6 @@ if (isset($_SESSION['user'])) {
         $counter =  $stmt->rowCount();
         header('Location:editUser.php?edit=profile');
 
-
-
         // start Items edite
     } elseif ($edit == 'items') {
 
@@ -221,6 +219,7 @@ if (isset($_SESSION['user'])) {
 
         if ($row['Approve'] == 0  && $row['Member_ID'] == $_SESSION['uid']) {
 
+
             if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 echo '<div class="container">';
 
@@ -228,7 +227,7 @@ if (isset($_SESSION['user'])) {
                 $getUser->execute(array($_POST['item_id']));
                 $info = $getUser->fetch();
 
-                // Upload Variables if the user won't edit the avatar 
+                // Upload Variables if the user won't edit or change the item image 
                 if (empty($_FILES['avatar']['name'])) {
                     $samePic = $info['mainImg'];
                 }
@@ -246,15 +245,16 @@ if (isset($_SESSION['user'])) {
                 $avatarExtension = array("jpeg", "jpg", "png", "gif");
 
 
-                // get the result from the post method
-                $name     = $_POST['name'];
-                $desc     = $_POST['description'];
-                $price    = $_POST['price'];
-                $country  = $_POST['country'];
-                $status   = $_POST['status'];
-                $category = $_POST['category'];
+                // get the result from the post method     
+                $name       = filter_var($_POST['name'], FILTER_SANITIZE_STRING);
+                $desc       = filter_var($_POST['description'], FILTER_SANITIZE_STRING);
+                $price      = filter_var($_POST['price'], FILTER_SANITIZE_NUMBER_INT);
+                $endDate    = date("Y-m-d H:i:s", strtotime($_POST["endbid"]));
+                $country    = filter_var($_POST['country'], FILTER_SANITIZE_STRING);
+                $category   = filter_var($_POST['category'], FILTER_SANITIZE_NUMBER_INT);
+                $status     = filter_var($_POST['status'], FILTER_SANITIZE_NUMBER_INT);
+                $tags       = filter_var($_POST['tags'], FILTER_SANITIZE_STRING);
                 $item_id  = $_POST['item_id'];
-                $tags     = $_POST['tags'];
 
                 // Validate Form
 
@@ -292,21 +292,27 @@ if (isset($_SESSION['user'])) {
                     $formErrors[] = 'The Image Can\'t be larger than 4MB';
                 }
 
+                // to check the end bid date more than 24 hour from now
+                if ((strtotime($_POST["endbid"]) - strtotime(date("Y-m-d H:i:s"))) < 86400) {
+                    $formErrors[] = 'End Bid should be after more then 24 hours';
+                }
+
                 if (empty($formErrors)) {
 
                     $avatar = rand(0, 9999999999999) . "_" . $avatarName;
                     move_uploaded_file($avatarTmp, "admin\uploaded\itemsImg\\" . $avatar);
                     if (isset($samePic)) {
-                        $avatar = $samePic; // if the user want the same pic (do not want to change the pic)
+                        $avatar = $samePic; // if the user wan't the same pic (do not wanna change the pic)
                     }
 
-                    $stmt = $con->prepare("UPDATE items SET Name = ? , Description = ?, Price = ? , Conutry_Made = ?,Status =? ,Cat_ID=?, tags=?,mainImg=? WHERE Item_ID = ? ");
-                    $stmt->execute(array($name, $desc, $price, $country,  $status, $category,  $tags, $avatar, $item_id));
-                    $row = $stmt->fetch();
+                    $stmt = $con->prepare("UPDATE items SET Name = ? , Description = ?, Price = ? , Conutry_Made = ?,Status =?,end_biddingDate=? ,Cat_ID=?, tags=?,mainImg=? WHERE Item_ID = ? ");
+                    $stmt->execute(array($name, $desc, $price, $country,  $status, $endDate, $category,  $tags, $avatar, $item_id));
+
                     $counter =  $stmt->rowCount();
-                    if ($stmt) {
+
+                    if (@$stmt) {
                         $theMsg = "<div class='alert alert-success'>$counter Record Updated </div>";
-                        redirectHome($theMsg, "back", 0);
+                        redirectHome($theMsg, "back", 5);
                     }
                 }
             }
@@ -322,7 +328,7 @@ if (isset($_SESSION['user'])) {
                 <div class="row">
                     <div class="col-md-8">
                         <form class="form-horizontal main-form" enctype="multipart/form-data"
-                            action="editUser.php?edit=items&itemid=<?php echo $_GET['itemid'] ?> " method="POST">
+                            action="editUser.php?edit=items&itemid=<?php echo $_GET['itemid'] ?>" method="POST">
 
                             <input type="hidden" name="item_id" value="<?php echo $_GET['itemid'] ?>">
                             <!-- Start Name Field -->
@@ -433,6 +439,17 @@ if (isset($_SESSION['user'])) {
                             </div>
                             <!-- End Avatar Field -->
 
+                            <!--Start endBid Field -->
+                            <div class="form-group form-group-lg">
+                                <label class="col-sm-3 control-label">End bid Date</label>
+                                <div class="col-sm-10 col-md-9">
+                                    <input type="datetime-local"
+                                        value="<?php echo date("Y-m-d\TH:i", strtotime($row['end_biddingDate'])); ?>"
+                                        name="endbid" class="form-control" placeholder="" autocomplete="on" required />
+                                </div>
+                            </div>
+                            <!-- End endBid Field -->
+
                             <!-- Start Save Field -->
                             <div class="form-group form-group-lg">
                                 <div class="col-sm-offset-3 col-sm-9">
@@ -466,10 +483,6 @@ if (isset($_SESSION['user'])) {
                                 foreach ($formErrors as $error) {
                                     echo '<div class="alert alert-danger">' . $error . '</div>';
                                 }
-                            }
-
-                            if (@$stmta) {
-                                echo '<div class="alert alert-success">Item Inserted</div>';
                             }
                             ?>
                 <!--End Looping Error Array-->
