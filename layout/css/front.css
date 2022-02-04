@@ -234,6 +234,10 @@ form.signup input.form-control:focus {
   max-height: 44px;
   overflow: hidden;
 }
+
+.item-box img {
+  height: 275px;
+}
 /*End Profile Page*/
 
 /*Start Show item Page*/

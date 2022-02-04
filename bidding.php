@@ -28,7 +28,11 @@ if (isset($_SESSION['user'])) {
 <div class="container">
     <div class="row">
         <div class="col-md-3">
-            <img class="img-responsive img-thumbnail center-block" src="imgtest.png" alt="">
+            <img class="img-responsive img-thumbnail center-block" src="<?php if (empty($item['mainImg'])) {
+                                                                                    echo "admin/uploaded/itemsImg/999999999_default.png";
+                                                                                } else {
+                                                                                    echo "admin/uploaded/itemsImg/" . $item['mainImg'];
+                                                                                }  ?>" alt="">
         </div>
         <div class="col-md-9 item-info">
             <h2><?php echo $item['Name'] ?></h2>
@@ -96,7 +100,7 @@ if (isset($_SESSION['user'])) {
             $id_Lastbid =  $stmtMaxprice->fetch();
 
             // to Check how much the user have in the wallet 
-            $wallet = $con->prepare('SELECT wallet FROM users WHERE UserID = ?');
+            $wallet = $con->prepare('SELECT wallet,RegStatus FROM users WHERE UserID = ?');
             $wallet->execute(array($_SESSION['uid']));
             $wallet_bid = $wallet->fetch();
 
@@ -121,6 +125,10 @@ if (isset($_SESSION['user'])) {
                     $formErrors[] = 'Sorry bidding time is over';
                 }
 
+
+                if ($item['Member_ID'] === $_SESSION['uid']) {
+                    $formErrors[] = 'You can\'t bid on your item';
+                }
                 if (empty($_POST['bid'])) {
                     $formErrors[] = 'You have to put a number';
                 }
@@ -138,6 +146,11 @@ if (isset($_SESSION['user'])) {
                 if (is_numeric($_POST['bid'])   &&  $_POST['bid'] > $wallet_bid['wallet']) {
                     $formErrors[] = 'You did that much mony in the wallet';
                 }
+
+                if ($wallet_bid['RegStatus'] == 0) {
+                    $formErrors[] = 'Your account need admin approved';
+                }
+
 
                 if ($current['current'] >= $_POST['bid']) {
                     $formErrors[] = 'You have to Choos Number More Than $' . $current['current'];

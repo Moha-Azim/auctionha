@@ -7,7 +7,10 @@ if (isset($_SESSION['user'])) {
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-
+        // to Check if the user account is approved yet 
+        $reg = $con->prepare('SELECT RegStatus FROM users WHERE UserID = ?');
+        $reg->execute(array($_SESSION['uid']));
+        $regStatus = $reg->fetch();
 
 
         $avatarName = $_FILES['avatar']['name'];
@@ -68,7 +71,9 @@ if (isset($_SESSION['user'])) {
         if ((strtotime($_POST["endbid"]) - strtotime(date("Y-m-d H:i:s"))) < 86400) {
             $formErrors[] = 'End Bid should be after more then 24 hours';
         }
-
+        if ($regStatus['RegStatus'] == 0) {  // to Check if the user account is approved yet 
+            $formErrors[] = 'Your account need admin approved';
+        }
 
 
         if (empty($formErrors)) {

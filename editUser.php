@@ -217,6 +217,12 @@ if (isset($_SESSION['user'])) {
         $stmt->execute(array($_GET['itemid']));
         $row = $stmt->fetch();
 
+
+        // to Check if the user account is approved yet 
+        $reg = $con->prepare('SELECT RegStatus FROM users WHERE UserID = ?');
+        $reg->execute(array($_SESSION['uid']));
+        $regStatus = $reg->fetch();
+
         if ($row['Approve'] == 0  && $row['Member_ID'] == $_SESSION['uid']) {
 
 
@@ -295,6 +301,10 @@ if (isset($_SESSION['user'])) {
                 // to check the end bid date more than 24 hour from now
                 if ((strtotime($_POST["endbid"]) - strtotime(date("Y-m-d H:i:s"))) < 86400) {
                     $formErrors[] = 'End Bid should be after more then 24 hours';
+                }
+
+                if ($regStatus['RegStatus'] == 0) {  // to Check if the user account is approved yet 
+                    $formErrors[] = 'Your account need admin approved';
                 }
 
                 if (empty($formErrors)) {

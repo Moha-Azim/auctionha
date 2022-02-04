@@ -27,6 +27,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_SESSION['userID'] = $row['UserID'];
         header('Location: dashboard.php');
         exit();
+    } else {
+        header('Location: index.php?msg=failed');
     }
 }
 
@@ -34,6 +36,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <form class="login" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
     <h3 class="text-center">Admin Login</h3>
+    <?php if (isset($_GET["msg"]) && $_GET["msg"] == 'failed') {
+        echo "<p class='text-danger text-center'>The username or password is incorrect</p>";
+    } ?>
     <input class="form-control input-lg" type="text" name='user' placeholder="Username" autocomplete="off">
     <input class="form-control input-lg" type="password" name='password' placeholder="Password" autocomplete="off">
     <input class="btn btn-lg btn-primary btn-block " type="submit" value="Login">

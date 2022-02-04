@@ -26,6 +26,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $_SESSION['user'] = $user;
             header('Location: index.php');
             exit();
+        } else {
+            header('Location: login.php?msg=failed');
         }
     } else { // sing up page code (will to the else code if user press on singup  case i put value in the button singup ==> value='singup')//
         $formErrors = array();
@@ -80,6 +82,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             Signup</span>
     </h1>
     <!--Start Login Form-->
+    <?php if (isset($_GET["msg"]) && $_GET["msg"] == 'failed') {
+        echo "<p class='text-danger text-center'>The username or password is incorrect</p>";
+    } ?>
     <form class="login" action="<?php echo $_SERVER['PHP_SELF']; ?>" method='POST'>
         <div class=" input-container">
             <input class="form-control" type="text" name="username" autocomplete="off" placeholder="Username" required>
