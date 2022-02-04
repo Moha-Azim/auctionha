@@ -7,15 +7,34 @@ if (isset($_SESSION['user'])) {
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-        $formErrors = array();
+
+
+
+        $avatarName = $_FILES['avatar']['name'];
+        $avatarType = $_FILES['avatar']['type'];
+        $avatarTmp  = $_FILES['avatar']['tmp_name'];
+        $avatarSize = $_FILES['avatar']['size'];
+
+        // extract the extension and make it to lower case  and ignore the waring if  there is no image
+        @$extention = strtolower(pathinfo($avatarName)['extension']);
+
+
+        //List Of Allowed File Typed To Upload
+        $avatarExtension = array("jpeg", "jpg", "png", "gif");
+
 
         $name       = filter_var($_POST['name'], FILTER_SANITIZE_STRING);
         $desc       = filter_var($_POST['description'], FILTER_SANITIZE_STRING);
         $price      = filter_var($_POST['price'], FILTER_SANITIZE_NUMBER_INT);
+        $endDate    = date("Y-m-d H:i:s", strtotime($_POST["endbid"]));
         $country    = filter_var($_POST['country'], FILTER_SANITIZE_STRING);
         $category   = filter_var($_POST['category'], FILTER_SANITIZE_NUMBER_INT);
         $status     = filter_var($_POST['status'], FILTER_SANITIZE_NUMBER_INT);
         $tags       = filter_var($_POST['tags'], FILTER_SANITIZE_STRING);
+
+        $formErrors = array();
+
+
         if (strlen($name) < 4) {
             $formErrors[] = 'The Item Name Can\'t be Less Than 4 Characters';
         }
@@ -34,20 +53,35 @@ if (isset($_SESSION['user'])) {
         if (empty($status)) {
             $formErrors[] = 'You Have to choose a Status';
         }
+        if (empty($avatarName)) {
+            $formErrors[] = 'You have to choose an Image';
+        }
+        if (!in_array($extention, $avatarExtension) && !empty($avatarName)) {
+            $formErrors[] = 'The Image Extension Not Allowed You can upload image "jpeg", "jpg", "png", "gif" Only';
+        }
+        if (@$avatarSize > 4194304) {
+            $formErrors[] = 'The Image Can\'t be larger than 4MB';
+        }
+
 
 
         if (empty($formErrors)) {
 
-            $stmta = $con->prepare("INSERT INTO items (Name,Description,Price,Conutry_Made,Status,Add_Date ,Cat_ID,Member_ID,tags) VALUES (:name , :desc , :price , :country ,:status,now(),:category,:member,:tags)");
+            $avatar = rand(0, 9999999999999) . "_" . $avatarName;
+            move_uploaded_file($avatarTmp, "admin\uploaded\itemsImg\\" . $avatar);
+
+            $stmta = $con->prepare("INSERT INTO items (Name,Description,Price,Conutry_Made,Status,Add_Date,end_biddingDate ,Cat_ID,Member_ID,tags,mainImg) VALUES (:name , :desc , :price , :country ,:status,now(),:end_biddingDate,:category,:member,:tags,:mainImg)");
             $stmta->execute(array(
-                ':name'     => $name,
-                ':desc'     => $desc,
-                ':price'    => $price,
-                ':country'  => $country,
-                ':status'   => $status,
-                ':category' => $category,
-                ':member'   => $_SESSION['uid'],
-                ':tags'     => $tags
+                ':name'             => $name,
+                ':desc'             => $desc,
+                ':price'            => $price,
+                ':country'          => $country,
+                ':status'           => $status,
+                ':end_biddingDate'  => $endDate,
+                ':category'         => $category,
+                ':member'           => $_SESSION['uid'],
+                ':tags'             => $tags,
+                ':mainImg'          => $avatar
             ));
         }
     }
@@ -63,7 +97,7 @@ if (isset($_SESSION['user'])) {
                 <div class="row">
                     <div class="col-md-8">
                         <form class="form-horizontal main-form" action="<?php echo $_SERVER['PHP_SELF'] ?> "
-                            method="POST">
+                            enctype="multipart/form-data" method="POST">
 
                             <!-- Start Name Field -->
                             <div class="form-group form-group-lg">
@@ -161,6 +195,25 @@ if (isset($_SESSION['user'])) {
                                 </div>
                             </div>
                             <!-- End Tags Field -->
+
+                            <!-- Start Avatar Field -->
+                            <div class="form-group form-group-lg">
+                                <label class="col-sm-3 control-label">Item Image</label>
+                                <div class="col-sm-10 col-md-9">
+                                    <input type="file" name="avatar" class="form-control" required />
+                                </div>
+                            </div>
+                            <!-- End Avatar Field -->
+
+                            <div class="form-group form-group-lg">
+                                <label class="col-sm-3 control-label">End bid Date</label>
+                                <div class="col-sm-10 col-md-9">
+                                    <input type="datetime-local" name="endbid" class="form-control" placeholder=""
+                                        autocomplete="on" required />
+                                </div>
+                            </div>
+                            <!-- End Country Field -->
+
                             <!-- Start Save Field -->
                             <div class="form-group form-group-lg">
                                 <div class="col-sm-offset-3 col-sm-9">

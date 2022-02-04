@@ -129,15 +129,15 @@ if (isset($_SESSION['user'])) {
                                 ?>
                     </div>
                     <div class=" col-sm-9">
-                        <form class="form-horizontal" action="editUser.php?edit=profile" enctype="multipart/form-data"
-                            method="POST">
+                        <form class="form-horizontal edit-userss" action="editUser.php?edit=profile"
+                            enctype="multipart/form-data" method="POST">
                             <input type="hidden" name="userid" value='<?php echo $user_id; ?>' />
                             <!-- send the user id -->
 
                             <!-- Start Password Field -->
                             <div class="form-group form-group-lg">
                                 <label class="col-sm-2 control-label">Password</label>
-                                <div class="col-sm-10 col-md-6">
+                                <div class="col-sm-10 col-md-6 showthe-pass">
                                     <input type="hidden" name="oldpassword" value="<?php echo $info['Password'] ?>" />
                                     <input type="password" name="newpassword" class="password form-control"
                                         autocomplete="new-password"
@@ -436,7 +436,7 @@ if (isset($_SESSION['user'])) {
                             <!-- Start Save Field -->
                             <div class="form-group form-group-lg">
                                 <div class="col-sm-offset-3 col-sm-9">
-                                    <input type="submit" value="+ Add Item" class="btn btn-primary btn-lg" />
+                                    <input type="submit" value="Update Item" class="btn btn-primary btn-lg" />
                                 </div>
                             </div>
                             <!-- End Save Field -->

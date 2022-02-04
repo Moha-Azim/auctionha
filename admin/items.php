@@ -189,7 +189,7 @@ if (isset($_SESSION['userloged'])) {
         <div class="form-group form-group-lg">
             <label class="col-sm-2 control-label">Item Image</label>
             <div class="col-sm-10 col-md-6">
-                <input type="file" name="avatar" class="form-control" required />u
+                <input type="file" name="avatar" class="form-control" required />
             </div>
         </div>
         <!-- End Avatar Field -->
