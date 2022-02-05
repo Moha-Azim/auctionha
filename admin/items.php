@@ -55,7 +55,7 @@ if (isset($_SESSION['userloged'])) {
 
         </table>
     </div>
-    <a class="btn btn-primary" href='items.php?do=add'> <i class="fa fa-plus"></i> Add New Item </a>
+    <a class="btn btn-primary fixedbtn" href='items.php?do=add'> <i class="fa fa-plus"></i> Add New Item </a>
 </div>
 
 

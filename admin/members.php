@@ -66,7 +66,7 @@ if (isset($_SESSION['userloged'])) {
 
         </table>
     </div>
-    <a class="btn btn-primary" href='?do=add'> <i class="fa fa-plus"></i> Add New Member </a>
+    <a class="btn btn-primary fixedbtn" href='?do=add'> <i class="fa fa-plus"></i> Add New Member </a>
 </div>
 
 
@@ -134,7 +134,7 @@ if (isset($_SESSION['userloged'])) {
         <!-- Start Save Field -->
         <div class="form-group form-group-lg">
             <div class="col-sm-offset-2 col-sm-10">
-                <input type="submit" value="Add Member" class="btn btn-primary btn-lg" />
+                <input type="submit" value="Add Member" class="btn btn-primary btn-lg " />
             </div>
         </div>
         <!-- End Save Field -->
@@ -330,8 +330,12 @@ if (isset($_SESSION['userloged'])) {
         </div>
         <!-- End Save Field -->
 
-
     </form>
+    <div class="form-group form-group-lg pull-right">
+        <div class="col-sm-offset-2 col-sm-10">
+            <a href="wallet.php?id=<?php echo $row['UserID']  ?>" class="btn btn-success btn-lg" />Go to Wallet</a>
+        </div>
+    </div>
 </div>
 
 <?php

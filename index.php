@@ -12,7 +12,7 @@ include "init.php";
     <h1 class="text-center">Auction-HA</h1>
     <?php
     $items = getAllFrom('items', 'Item_ID', 'WHERE Approve = 1');
-    foreach ($items as $item) { // to get  only itmes in this category
+    foreach ($items as $item) {
         echo '<div class="col-sm-6 col-md-3">';
         echo '<div class="thumbnail item-box">';
         echo '<span class="price-tag">$' . $item['Price'] . '</span>';

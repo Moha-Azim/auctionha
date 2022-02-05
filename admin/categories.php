@@ -82,7 +82,7 @@ if (isset($_SESSION['userloged'])) {
                     ?>
         </div>
     </div>
-    <a href='categories.php?do=add' class='btn btn-primary'><i class='fa fa-plus'></i> Add Category</a>
+    <a href='categories.php?do=add' class='btn btn-primary fixedbtn'><i class='fa fa-plus'></i> Add Category</a>
 </div>
 <?php
     } elseif ($do == 'add') {
