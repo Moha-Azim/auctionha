@@ -16,6 +16,7 @@ if (isset($_SESSION['user'])) {
 
     $itemid = isset($_GET['itemid']) && is_numeric($_GET['itemid']) ? intval($_GET['itemid']) : 0;
 
+    // to select the item and member id and category id
     $stmt = $con->prepare("SELECT items.*, users.Username, categories.Name AS category_name FROM items INNER JOIN users ON Member_ID = UserID INNER JOIN categories ON Cat_ID = ID WHERE Item_ID = ? AND Approve = 1;
 ");
     $stmt->execute(array($itemid));
@@ -107,8 +108,15 @@ if (isset($_SESSION['user'])) {
             // to select the time
             $now = new DateTime();
             $bid_time_remaining = new DateTime($item['end_biddingDate']);
+
             $interval = $bid_time_remaining->diff($now);
 
+            //if bid time remaining is 0  and there is no bid on itme will add another 1 day on bid time remaining
+            if ($bid_time_remaining < $now && $current['counte'] == 0) {
+                $result = $now->format('Y-m-d H:i:s'); // to convert the format
+                $hourp =  $con->prepare("UPDATE  items SET end_biddingDate =  date_add(now(),interval 1 day); WHERE Item_ID = ?");
+                $hourp->execute(array($itemid));
+            }
 
             // bidding inserting
             if ($_SERVER['REQUEST_METHOD'] == 'POST') {
