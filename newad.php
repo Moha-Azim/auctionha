@@ -69,7 +69,7 @@ if (isset($_SESSION['user'])) {
         }
         // to check the end bid date more than 24 hour from now
         if ((strtotime($_POST["endbid"]) - strtotime(date("Y-m-d H:i:s"))) < 86400) {
-            $formErrors[] = 'End Bid should be after more then 24 hours';
+            $formErrors[] = 'End Bid should be at least after 24 hours';
         }
         if ($regStatus['RegStatus'] == 0) {  // to Check if the user account is approved yet 
             $formErrors[] = 'Your account need admin approved';
@@ -239,7 +239,7 @@ if (isset($_SESSION['user'])) {
                     <div class="col-md-4">
                         <div class="thumbnail item-box live-preview">
                             <span class="price-tag">$<span class="live-price">0</span></span>
-                            <img class="img-responsive" src="imgtest.png" alt="">
+                            <img class="img-responsive" src="admin/uploaded/itemsImg/999999999_default.png" alt="">
                             <div class="caption">
                                 <h3 class="live-title">Test</h3>
                                 <p class="live-desc">desc teste</p>

@@ -45,6 +45,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </form>
 
 
-<?php include $temp . "footer.php";
+<?php
 ob_end_flush();
 ?>

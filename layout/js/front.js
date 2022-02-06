@@ -40,8 +40,8 @@ $(function (){
         PassField.attr('type', 'password');
     });
 
-    // Confirmation before Delete  When press on confirm btn
 
+    // Confirmation before Delete  When press on confirm btn
     $('.confirm').click(function(){
         return confirm('Are you sure About this Deleting')
     });

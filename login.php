@@ -2,7 +2,7 @@
 ob_start();
 
 session_start();
-$pageTitle = "Login";
+$pageTitle = "User Login";
 if (isset($_SESSION['user'])) {
     header('Location: index.php');
 }
@@ -136,6 +136,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </div>
 
 
-<?php include $temp . "footer.php";
+<?php
+include $temp . "footer.php";
 ob_end_flush();
 ?>

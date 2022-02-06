@@ -300,7 +300,7 @@ if (isset($_SESSION['user'])) {
 
                 // to check the end bid date more than 24 hour from now
                 if ((strtotime($_POST["endbid"]) - strtotime(date("Y-m-d H:i:s"))) < 86400) {
-                    $formErrors[] = 'End Bid should be after more then 24 hours';
+                    $formErrors[] = 'End Bid should be at least after 24 hours';
                 }
 
                 if ($regStatus['RegStatus'] == 0) {  // to Check if the user account is approved yet 
@@ -472,7 +472,7 @@ if (isset($_SESSION['user'])) {
 
                     <div class="col-md-4">
                         <div class="thumbnail item-box live-preview">
-                            <span class="price-tag">$<span class="live-price">0</span></span>
+                            <span class="price-tag">$<span class="live-price"><?php echo $row['Price']; ?></span></span>
                             <img class="img-responsive" src="<?php
                                                                             if (empty($row['mainImg'])) {
                                                                                 echo "admin/uploaded/itemsImg/999999999_default.png";
@@ -481,8 +481,8 @@ if (isset($_SESSION['user'])) {
                                                                             }
                                                                             ?>" alt="">
                             <div class="caption">
-                                <h3 class="live-title">Test</h3>
-                                <p class="live-desc">desc teste</p>
+                                <h3 class="live-title"><?php echo $row['Name']; ?></h3>
+                                <p class="live-desc"><?php echo $row['Description']; ?></p>
                             </div>
                         </div>
                     </div>

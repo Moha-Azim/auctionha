@@ -396,3 +396,48 @@ form.signup input.form-control:focus {
 }
 
 /*End Our custem */
+
+/*Start Footer */
+.footer-07 {
+  background-color: #121212;
+  padding: 7em 0;
+}
+
+.footer-07 .footer-heading .logo {
+  color: #fff;
+  text-decoration: none;
+}
+
+.footer-07 .footer-heading {
+  font-size: 30px;
+  color: #fff;
+  font-weight: 700;
+  margin-bottom: 30px;
+}
+
+.footer-07 .menu {
+  margin-bottom: 30px;
+}
+
+.footer-07 p {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.footer-07 .menu a {
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.ftco-footer-social li {
+  list-style: none;
+  margin: 0 40px 0 0;
+  display: inline-block;
+}
+
+.mt-5,
+.my-5 {
+  margin-top: 3rem;
+}
+/*End footer*/
