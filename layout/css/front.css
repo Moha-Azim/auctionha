@@ -183,6 +183,7 @@ form.signup input.form-control:focus {
 .item-box {
   position: relative;
   overflow: hidden;
+  height: 424px;
 }
 .item-box .price-tag {
   background-color: #b4b4b4;
@@ -247,7 +248,10 @@ form.signup input.form-control:focus {
 }
 
 .item-box img {
-  height: 275px;
+  height: 65%;
+  max-height: 249px;
+  width: 100%;
+  max-width: 235px;
 }
 /*End Profile Page*/
 

@@ -11,7 +11,7 @@ include "init.php";
 <div class="container">
     <h1 class="text-center">Auction-HA</h1>
     <?php
-    $items = getAllFrom('items', 'Item_ID', 'WHERE Approve = 1');
+    $items = getAllFrom('items', 'Item_ID', 'WHERE Approve = 1'); // OR make the oreder by  rand()
     foreach ($items as $item) {
         echo '<div class="col-sm-6 col-md-3">';
         echo '<div class="thumbnail item-box">';
@@ -20,7 +20,7 @@ include "init.php";
         $now = new DateTime();
         $bid_time_remaining = new DateTime($item['end_biddingDate']);
 
-        $stmtb = $con->prepare('SELECT COUNT(*) AS counte FROM bidding WHERE item_id = ?;'); // to count if there bid process befor or not 
+        $stmtb = $con->prepare('SELECT COUNT(*) AS counte FROM bidding WHERE item_id = ?'); // to count if there bid process befor or not 
         $stmtb->execute(array($item['Item_ID']));
         $current = $stmtb->fetch();
 

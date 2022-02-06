@@ -289,7 +289,7 @@ if (isset($_SESSION['userloged'])) {
                 $avatar = rand(0, 9999999999999) . "_" . $avatarName;
                 move_uploaded_file($avatarTmp, "uploaded\itemsImg\\" . $avatar);
 
-                $stmt = $con->prepare("INSERT INTO items (Name,Description,Price,Conutry_Made,Status,Add_Date ,Cat_ID,Member_ID,tags,mainImg) VALUES (:name , :desc , :price , :country ,:status,now(),:category,:member,:tags ,:mainImg)");
+                $stmt = $con->prepare("INSERT INTO items (Name,Description,Price,Conutry_Made,Status,Approve,Add_Date ,Cat_ID,Member_ID,tags,mainImg) VALUES (:name , :desc , :price , :country ,:status,1,now(),:category,:member,:tags ,:mainImg)");
                 $stmt->execute(array(
                     ':name'     => $name,
                     ':desc'     => $desc,
