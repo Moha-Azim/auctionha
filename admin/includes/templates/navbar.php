@@ -20,6 +20,8 @@
                 <li><a href="items.php"><?php echo lang("ITEMS") ?><span class="sr-only">(current)</span></a></li>
                 <li><a href="members.php"><?php echo lang("MEMBERS") ?><span class="sr-only">(current)</span></a></li>
                 <li><a href="comments.php"><?php echo lang("COMMENTS") ?><span class="sr-only">(current)</span></a></li>
+                <li><a href="adminManage.php">Admins</a>
+                </li>
                 </li>
             </ul>
 
