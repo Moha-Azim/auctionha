@@ -4,7 +4,7 @@ session_start();
 $pageTitle =  "Tags";
 include "init.php";
 ?>
-//tr
+
 <div class="container">
     <?php
     //$items = isset($_GET['catid']) && is_numeric($_GET['catid']) ? intval($_GET['catid']) : 0;
